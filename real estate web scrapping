@@ -1,0 +1,42 @@
+import requests
+from bs4 import BeautifulSoup
+
+# Set the URL of the website you want to scrape
+url = 'https://www.example.com/real-estate/properties/'
+
+# Make an HTTP GET request to the website
+response = requests.get(url)
+
+# Parse the HTML of the website
+soup = BeautifulSoup(response.text, 'html.parser')
+
+# Find all of the property listings on the page
+listings = soup.find_all('div', class_='property-listing')
+
+# Iterate through the listings and extract the data for each property
+properties = []
+for listing in listings:
+  # Find the title of the property
+  title = listing.find('h3').text.strip()
+
+  # Find the price of the property
+  price = listing.find('span', class_='price').text.strip()
+
+  # Find the address of the property
+  address = listing.find('span', class_='address').text.strip()
+
+  # Find the number of bedrooms and bathrooms
+  details = listing.find('ul', class_='property-details').find_all('li')
+  bedrooms = details[0].text.strip()
+  bathrooms = details[1].text.strip()
+
+  # Add the property data to the list
+  properties.append({
+    'title': title,
+    'price': price,
+    'address': address,
+    'bedrooms': bedrooms,
+    'bathrooms': bathrooms
+  })
+
+print(properties)
